@@ -13,6 +13,16 @@ def smart(question, bank_info):
 
     for transaction in bank_info:
         transaction["date"] = transaction["date"].split("T")[0]
+
+    balance_month = {}
+    total_balance = 0
+    income = 0
+    for transaction in bank_info:
+        total_balance += transaction["amount"]
+        income = max(income, transaction["amount"])
+    
+    balance_month["Total Balance"] = total_balance
+    balance_month["Income"] = income
     openai.api_key = environ.get('OPENAI_API_KEY')
     completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=[
         {"role": "system", "content": """
@@ -30,8 +40,10 @@ def smart(question, bank_info):
         All values are in dollars.
         """},
         {"role": "system", "content": f"""
-        Here is the current information about the bank account, with his categories and the amount:
-        {bank_info}
+        Here is the current information about the bank account, in JSON format:
+        {bank_info}\n\n
+
+        And here is the current balance in JSON: {balance_month}.
         """},
         {"role": "user", "content": question}
     ])
