@@ -8,7 +8,21 @@ from domain import Transaction
 from exceptions import UnauthorizedError, NotFoundError, InternalServerError
 
 from utils import calculate_all, needs_transactions
+from functools import cache
 
+@cache
+def map_category(id_categorie):
+    url = f"https://int.strandscloud.com/fs-api/categories/{id_categorie}"
+
+    headers = {
+        "accept": "application/json",
+        "x-api-key": "5brZ6as5Qj3AhS2rzeedm8VGxUBTlMSD8YQsyxz3",
+        "Authorization": f'Bearer {os.getenv("USER_KEY")}'
+    }
+    response = requests.get(url, headers=headers)
+    name=response.json()["name"]
+    print(name)
+    return name
 
 class Client:
     BASE_URL = 'https://int.strandscloud.com/fs-api/'
@@ -79,25 +93,12 @@ class BankUser(Client):
         self.transactions = [
             self.process_transaction(t) for t in data['transactions']]
         return self.transactions
-
-    def get_map_categories(self):
-        url = f"https://int.strandscloud.com/fs-api/categories/"
-
-        headers = {
-            "accept": "application/json",
-            "x-api-key": "5brZ6as5Qj3AhS2rzeedm8VGxUBTlMSD8YQsyxz3",
-            "Authorization": f'Bearer {os.getenv("USER_KEY")}'
-        }
-        response = requests.get(url, headers=headers)
-        name=response.json()["name"]
-        print(name)
-        return name
+    
     def get_clear_transactions(self):
         result = []
-
         for t in self.get_transactions():
             t = t.to_json()
-            category_name=self.map_category(t["category"]["id"])
+            category_name=map_category(t["category"]["id"])
             result.append(
                 {"id": t["id"],
                  "category": category_name,
