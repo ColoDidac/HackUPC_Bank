@@ -10,6 +10,11 @@ def smart(question, bank_info):
         You are connected to a bank account and can answer questions about the
         current balance and common transactions.
         You must answer succinctly and in plain English the questions asked.
+        When the user asks about income, assume that the user is asking about
+        the revenue of the month.
+        Try to always make a guess, even if you are not sure about the answer.
+        Do not report negative numbers, only positive numbers.
+        All values are in dollars.
         """},
         {"role": "system", "content": f"""
         Here is the current information about the bank account, with his categories and the amount:
@@ -17,6 +22,7 @@ def smart(question, bank_info):
         """},
         {"role": "user", "content": question}
     ])
+    print(bank_info)
     print(completion.choices[0].message.content)
     return completion.choices[0].message.content
 
