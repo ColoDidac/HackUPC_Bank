@@ -7,6 +7,7 @@ from domain import Transaction
 from exceptions import UnauthorizedError, NotFoundError, InternalServerError
 
 
+
 class Client:
     BASE_URL = 'https://int.strandscloud.com/fs-api/'
 
@@ -42,6 +43,14 @@ class Client:
     def transaction(self, id):
         endpoint = f'transactions/{id}'
         return Transaction(self.client.request(endpoint))
+
+
+def needs_transactions(func):
+    def wrap(*args, **kwargs):
+        args[0].get_transactions()
+        result = func(*args, **kwargs)
+        return result
+    return wrap
 
 
 class BankUser(Client):
@@ -148,9 +157,9 @@ class BankUser(Client):
             if transaction["category"] == 81:
                 data_inicio_periodo=transaction["date"]
         """
-
+    @needs_transactions
     def get_transactions_per_month(self):
-        transactions_per_month = {}
+        transactions_per_month = {"{:02d}".format(i): [] for i in range(1, 13)}
         for transaction in self.transactions:
-            transactions_per_month[transaction.date[5:7]] = transaction
+            transactions_per_month[transaction.date[5:7]].append(transaction)
         return transactions_per_month

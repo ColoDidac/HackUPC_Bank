@@ -22,19 +22,12 @@ jobs:
           pip install ruff pytest
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Lint with ruff
-        env:
-          API_KEY: ${{ env:API_KEY }}
-          USER: ${{ env:USER }}
         run: |
           # stop the build if there are Python syntax errors or undefined names
           ruff --format=github --select=E9,F63,F7,F82 --target-version=py37 .
           # default set of ruff rules with GitHub Annotations
           ruff --format=github --target-version=py37 .
       - name: Test with pytest
-        env:
-          API_KEY: ${{ secrets.API_KEY }}
-          USER: ${{ secrets.USER }}
         run: |
-          echo $API_KEY
-          echo $USER
+          echo API_KEY=${{ secrets.API_KEY}}\nUSER=${{secrets.USER}} > .env
           pytest
