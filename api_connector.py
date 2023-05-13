@@ -114,7 +114,7 @@ class BankUser(Client):
 
     def status_bank_review(self):
         for transaction in self.simplified_transactions:
-            self.current_amount+=transaction["amount"]
+            self.current_amount += transaction["amount"]
             if transaction["category"] == 81:
                 self.salaries += transaction["amount"]
             else:
@@ -133,10 +133,14 @@ class BankUser(Client):
             return f"You should try to decrease the daily costs in order to be able to save some money." \
                    f"Currently you have {self.current_amount}"
         elif self.salaries + self.avg_day_cost < self.salaries * 0.3:
-            return "You should try to decrease the daily costs in order to be able to save the 30% of your income."
+            return "You should try to decrease the daily costs in order to be able to " \
+                   "save the 30% of your income."
         else:
-            return f"Your month is going alright with {self.salaries + self.spend} remaining, currently you have still to pay {self.debt}." \
-                   f"Your daily avg cost is {-self.avg_day_cost}. I estimate you will finish this month with {self.salaries + self.spend + self.debt + (restant_days * self.avg_day_cost)}"
+            return f"Your month is going alright with {self.salaries + self.spend} remaining, " \
+                   f"currently you have still to pay {self.debt}." \
+                   f"Your daily avg cost is {-self.avg_day_cost}. " \
+                   f"I estimate you will finish this month with " \
+                   f"{self.salaries + self.spend + self.debt + (restant_days * self.avg_day_cost)}"
 
     def calculate_avg(self):
         current_month = datetime.now().month
