@@ -26,7 +26,9 @@ class BankUser:
         for element in response.json()["transactions"]:
             self.current_amount += element["amount"]["amount"]
             self.transactions.append({"id": element["id"],
-                                      "amount": element["amount"]})
+                                      "category":element["category"]["id"],
+                                      "amount": element["amount"],
+                                      "date": element["date"]})
         print(self.client_id)
         print(self.transactions)
         print(self.current_amount)
@@ -43,7 +45,7 @@ class BankUser:
             self.upcoming_transactions.append({
                 "transaction": transaction["name"],
                 "amount": transaction["amount"],
-                "dueDate": transaction["dueDate"]
+                "dueDate": transaction["dueDate"],
             })
             given_date = datetime.strptime(transaction["dueDate"], '%Y-%m-%dT%H:%M%z')
             today_date = datetime.now(timezone.utc)
@@ -51,12 +53,35 @@ class BankUser:
         print(self.upcoming_transactions)
         print(self.debt)
 
-    # def calculate_alert(self):
+    def calculate_alert(self):
+        print()
 
+    def calculate_avg(self):
+        current_month = datetime.now().month
+        month_amount = 0
+        ##########
+        # MODE 1 #
+        #########
+        for transaction in self.transactions:
+            date_transaction = transaction["date"]
+            if int(date_transaction[5:7]) == current_month and transaction["amount"]["amount"] < 0:
+                month_amount += transaction["amount"]["amount"]
+        print(month_amount / datetime.now().day)
 
+        #################################
+        #   MODE 2                     #
+        #   DESDE DE QUE ES COBRA (CAT:80-81)    #
+        ##############################
+        """
+        data_inicio_periodo=""
+        for transaction in self.transactions:
+            if transaction["category"] == 81:
+                data_inicio_periodo=transaction["date"]
+        """
 if __name__ == '__main__':
     for client in range(5):
         client_bank = BankUser(client)
         client_bank.get_transactions()
-        #client_bank.get_upcoming_transactions()
+        # client_bank.get_upcoming_transactions()
         # client_bank.calculate_alert()
+        client_bank.calculate_avg()
