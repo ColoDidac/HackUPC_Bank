@@ -86,7 +86,7 @@ class BankUser(Client):
         return self.upcoming_transactions
 
     def calculate_alert(self):
-        print()
+        self.upcoming_transactions
 
     def calculate_avg(self):
         # TODO: Adapt to the new implementation
@@ -111,3 +111,5 @@ class BankUser(Client):
             if transaction["category"] == 81:
                 data_inicio_periodo=transaction["date"]
         """
+
+
