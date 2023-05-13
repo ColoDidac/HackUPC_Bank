@@ -44,7 +44,7 @@ async def simplify_transaction():
 @app.get('/consultai/{encoded_question}')
 async def consultai(encoded_question):
     transactions_list = bank.get_clear_transactions()
-    decoded_question = encoded_question.encode("utf-8").decode("base64")
+    decoded_question = unquote(encoded_question)
     return smart(decoded_question, transactions_list)
 
 
