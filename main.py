@@ -3,7 +3,6 @@ from fastapi import FastAPI
 from dotenv import load_dotenv
 
 from api_connector import BankUser
-from utils import encode_json
 
 load_dotenv()
 app = FastAPI()
@@ -29,7 +28,7 @@ async def transactions():
 
 @app.get('/transactions/upcoming')
 async def upcoming_transactions():
-    return encode_json(bank.get_upcoming_transactions())
+    return [t.to_json() for t in bank.get_upcoming_transactions()]
 
 
 @app.get('/transactions/avg')
@@ -41,7 +40,7 @@ async def avg():
 
 @app.get('/transactions/month')
 async def transactions_month():
-    return encode_json(bank.get_transactions_per_month())
+    return bank.get_transactions_per_month()
 
 
 @app.get('/transaction/{id}')
