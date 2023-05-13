@@ -9,7 +9,7 @@ json_exclude = {'_data'}
 
 load_dotenv()
 app = FastAPI()
-bank = BankUser(environ.get('API_KEY'), environ.get('USER'))
+bank = BankUser(environ.get('API_KEY'), environ.get('USER_KEY'))
 
 
 @app.get("/")
