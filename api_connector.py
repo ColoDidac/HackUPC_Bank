@@ -126,7 +126,8 @@ class BankUser(Client):
         current_day = datetime.now().day
         current_year = datetime.now().year
         restant_days = monthrange(current_year, current_month)[1] - current_day
-        print(restant_days)
+        estimated = self.salaries + self.spend + self.debt + (
+                restant_days * self.avg_day_cost)
         if self.salaries + self.debt + self.spend < 0:
             return "This Month your bills will be higher than your incomes."
         elif self.salaries + self.avg_day_cost * restant_days < 0:
@@ -134,15 +135,15 @@ class BankUser(Client):
                    f"costs in order to be able to save some money." \
                    f"Currently you have {self.current_amount}"
         elif self.salaries + self.avg_day_cost < self.salaries * 0.3:
-            return "You should try to decrease the daily costs in order to be able to " \
-                   "save the 30% of your income."
+            return "You should try to decrease the daily costs in order to " \
+                   "be able to save the 30% of your income."
         else:
             return f"Your month is going alright " \
                    f"with {self.salaries + self.spend} remaining, " \
                    f"currently you have still to pay {self.debt}." \
                    f"Your daily avg cost is {-self.avg_day_cost}. " \
                    f"I estimate you will finish this month with " \
-                   f"{self.salaries + self.spend + self.debt + (restant_days * self.avg_day_cost)}"
+                   f"{estimated}"
 
     def calculate_avg(self):
         current_month = datetime.now().month
