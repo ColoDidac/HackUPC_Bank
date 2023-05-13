@@ -20,7 +20,7 @@ class BankUser:
         headers = {
             "accept": "application/json",
             "x-api-key": "5brZ6as5Qj3AhS2rzeedm8VGxUBTlMSD8YQsyxz3",
-            "Authorization": "bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InhMQVRvOWM2T3VQci1jWEdqMEc3UiJ9.eyJpc3MiOiJodHRwczovL3N0cmFuZHMtZGVtby1iYW5rLmV1LmF1dGgwLmNvbS8iLCJzdWIiOiJhdXRoMHx1c2VyUEZNMTYiLCJhdWQiOiJodHRwOi8vc2FuZGJveC5zdHJhbmRzY2xvdWQuY29tLyIsImlhdCI6MTY4Mzc5Njc5NiwiZXhwIjoxNjg0MjI4Nzk2LCJhenAiOiJtRG5YajB0TDNZWEVOVldtQ2NOQ2xKUG5lV2loenlIbCIsImd0eSI6InBhc3N3b3JkIn0.IDlxIHJiYsXHsMWdqasdXSTtVm7MjvbJiitVzyGFuTU6arsorLzK8giJnUXhaPHCo1SlXeHlKzb58cLnSJlaohvXaBFjECZ9sSMxfRYMM16SNW8oq51ZUyhUJogrgzvY5AdQhQ6YBKF_nXJrRGOqICzePl1Dq3zUeeFZbZ4nJzgJi_sy2mXNFdtZZU-2U0T6T59ba8GmTz2u3itseIhzRI8R8WdwQaCN-HG8bl5lH2nUsfRIcpJskgIOHIizPCCJu4_K-06nFItbYQy8hvsB6ml5_BlkUb1hcfczn2b05yM6n9xFLOOrRLk3NZ_u9FZBGsxXZvmveG_vZnx0F1BuXg"
+            "Authorization": f"bearer {self.token}"
         }
         response = requests.get(url, headers=headers)
         for element in response.json()["transactions"]:
@@ -38,7 +38,7 @@ class BankUser:
         headers = {
             "accept": "application/json",
             "x-api-key": "5brZ6as5Qj3AhS2rzeedm8VGxUBTlMSD8YQsyxz3",
-            "Authorization": "bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InhMQVRvOWM2T3VQci1jWEdqMEc3UiJ9.eyJpc3MiOiJodHRwczovL3N0cmFuZHMtZGVtby1iYW5rLmV1LmF1dGgwLmNvbS8iLCJzdWIiOiJhdXRoMHx1c2VyUEZNMTkiLCJhdWQiOiJodHRwOi8vc2FuZGJveC5zdHJhbmRzY2xvdWQuY29tLyIsImlhdCI6MTY4Mzc5Njc5NywiZXhwIjoxNjg0MjI4Nzk3LCJhenAiOiJtRG5YajB0TDNZWEVOVldtQ2NOQ2xKUG5lV2loenlIbCIsImd0eSI6InBhc3N3b3JkIn0.h4rWdi3Smy3cHLLD0pjWsIfXloiUaLwqxX93NrE2XUqcK5Q4N4uwliQHvn6Mus8GIjWeGhSPAevELFZPbniTcfjxmcKHk_Mg7bCW3nKa5CEuVgUPjjSCOpBezWTm0--QiSjz5TZerGn6sl7UbgUxwwR719CkjDkklslRnT1O5squSI8A4z032n1cisrFOSMCdpXzeaGWCdidePtFS1VY4sy9T6Fh9PzNsi0ubwWvfrsu20eRB_6JGxEl5BRTZ8Xer5P3ifwRJRR19iEB3kPiZrNQ7IzXZHY9TjV3Q4SZ-mQrlBGtc5D8FdTiJr_qkWv3zjgCz-U3VanCk6DJK4RZaA"
+            "Authorization": f"bearer {self.token}"
         }
         response = requests.get(url, headers=headers)
         for transaction in response.json()["upcomingTransactions"]:
