@@ -29,7 +29,7 @@ async def simplify_transaction():
     return bank.get_clear_transactions()
 
 
-@app.get('/consultai/{encoded_question}')
+@app.get('/consultai/{question}')
 async def simplify_transaction(encoded_question):
     transactions_list = bank.get_clear_transactions()
     return smart(unquote(question), transactions_list)
