@@ -25,6 +25,13 @@ async def upcoming_transactions():
     return [t.to_json() for t in bank.get_upcoming_transactions()]
 
 
+@app.get('/transactions/avg')
+async def avg():
+    if not bank.transactions:
+        bank.get_transactions()
+    return bank.calculate_avg()
+
+
 @app.get('/transactions/{id}')
 async def transaction(id: str):
     return bank.get_transaction(id).to_json()

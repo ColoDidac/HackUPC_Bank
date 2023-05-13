@@ -86,20 +86,19 @@ class BankUser(Client):
         return self.upcoming_transactions
 
     def calculate_alert(self):
-        print()
+        raise NotImplementedError
 
     def calculate_avg(self):
-        # TODO: Adapt to the new implementation
         current_month = datetime.now().month
         month_amount = 0
         ##########
         # MODE 1 #
         #########
         for transaction in self.transactions:
-            date_transaction = transaction["date"]
-            if int(date_transaction[5:7]) == current_month and transaction["amount"]["amount"] < 0:
-                month_amount += transaction["amount"]["amount"]
-        print(month_amount / datetime.now().day)
+            if int(transaction.date[5:7]
+                   ) == current_month and transaction.amount.amount < 0:
+                month_amount += transaction.amount.amount
+        return month_amount / datetime.now().day
 
         #################################
         #   MODE 2                     #
