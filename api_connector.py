@@ -110,3 +110,9 @@ class BankUser(Client):
             if transaction["category"] == 81:
                 data_inicio_periodo=transaction["date"]
         """
+
+    def get_transactions_per_month(self):
+        transactions_per_month = {}
+        for transaction in self.transactions:
+            transactions_per_month[transaction.date[5:7]] = transaction
+        return transactions_per_month
