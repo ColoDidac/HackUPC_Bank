@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 from domain import Transaction
 from exceptions import UnauthorizedError, NotFoundError, InternalServerError
 
+from utils import calculate_all
 
 
 class Client:
@@ -50,6 +51,7 @@ def needs_transactions(func):
         args[0].get_transactions()
         result = func(*args, **kwargs)
         return result
+
     return wrap
 
 
@@ -112,27 +114,29 @@ class BankUser(Client):
 
     def status_bank_review(self):
         for transaction in self.simplified_transactions:
+            self.current_amount+=transaction["amount"]
             if transaction["category"] == 81:
                 self.salaries += transaction["amount"]
             else:
                 self.spend += transaction["amount"]
 
+    @calculate_all
     def calculate_alert(self):
         current_month = datetime.now().month
         current_day = datetime.now().day
         current_year = datetime.now().year
         restant_days = monthrange(current_year, current_month)[1] - current_day
-        self.calculate_avg()
         print(restant_days)
         if self.salaries + self.debt + self.spend < 0:
             return "This Month your bills will be higher than your incomes."
-        elif self.salaries - self.avg_day_cost * restant_days < 0:
-            return "You should try to decrease the daily costs in order to be able to save some money."
-        elif self.salaries - self.avg_day_cost < self.salaries * 0.3:
+        elif self.salaries + self.avg_day_cost * restant_days < 0:
+            return f"You should try to decrease the daily costs in order to be able to save some money." \
+                   f"Currently you have {self.current_amount}"
+        elif self.salaries + self.avg_day_cost < self.salaries * 0.3:
             return "You should try to decrease the daily costs in order to be able to save the 30% of your income."
         else:
             return f"Your month is going alright with {self.salaries + self.spend} remaining, currently you have still to pay {self.debt}." \
-                   f"Your daily avg cost is {self.avg_day_cost}. I estimate you will finish this month with {self.salaries + self.spend + self.debt - (restant_days*self.avg_day_cost)}"
+                   f"Your daily avg cost is {-self.avg_day_cost}. I estimate you will finish this month with {self.salaries + self.spend + self.debt + (restant_days * self.avg_day_cost)}"
 
     def calculate_avg(self):
         current_month = datetime.now().month
@@ -157,6 +161,7 @@ class BankUser(Client):
             if transaction["category"] == 81:
                 data_inicio_periodo=transaction["date"]
         """
+
     @needs_transactions
     def get_transactions_per_month(self):
         transactions_per_month = {"{:02d}".format(i): [] for i in range(1, 13)}
