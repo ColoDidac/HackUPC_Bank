@@ -18,7 +18,7 @@ def smart(question, bank_info):
         {"role": "user", "content": question}
     ])
     print(completion.choices[0].message.content)
-    return 'I am too dumb to answer that question.'
+    return completion.choices[0].message.content
 
 
 if __name__ == '__main__':

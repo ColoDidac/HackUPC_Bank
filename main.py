@@ -27,10 +27,10 @@ async def transactions():
 async def simplify_transaction():
     return bank.get_clear_transactions()
 
-@app.get('/consultai')
-async def simplify_transaction():
+@app.get('/consultai/{question}')
+async def simplify_transaction(question):
     transactions_list=bank.get_clear_transactions()
-    return transactions_list
+    return smart(question, transactions_list)
 
 
 @app.get('/alerts')
