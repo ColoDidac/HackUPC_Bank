@@ -35,4 +35,6 @@ jobs:
           API_KEY: ${{ secrets.API_KEY }}
           USER: ${{ secrets.USER }}
         run: |
+          echo $API_KEY
+          echo $USER
           pytest
