@@ -19,7 +19,7 @@ async def transactions():
     return [t.to_json() for t in bank.get_transactions()]
 
 @app.get('/simplified/transaction')
-async def transactions():
+async def simplify_transaction():
     result=[]
     for t in bank.get_transactions():
         t=t.to_json()
