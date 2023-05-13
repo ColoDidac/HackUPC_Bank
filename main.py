@@ -21,14 +21,15 @@ async def read_root():
 async def transactions():
     return jsonable_encoder(bank.get_transactions(), exclude=json_exclude)
 
+
 @app.get('/simplified/transaction')
 async def simplify_transaction():
     return bank.get_clear_transactions()
 
+
 @app.get('/alerts')
 async def alerts():
     return bank.calculate_alert()
-
 
 
 @app.get('/transactions/upcoming')

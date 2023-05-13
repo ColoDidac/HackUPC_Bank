@@ -5,15 +5,13 @@ import openai
 def smart(question, bank_info):
     openai.api_key = environ.get('OPENAI_API_KEY')
     completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=[
-        {"role": "system", "content":
-        """
+        {"role": "system", "content": """
         You are an AI that can answer questions about bank transactions.
-        You are connected to a bank account """ \
-        """and can answer questions about the current balance and common transactions.
+        You are connected to a bank account and can answer questions about the
+        current balance and common transactions.
         You must answer succinctly and in plain English the questions asked.
         """},
-        {"role": "system", "content":
-        f"""
+        {"role": "system", "content": f"""
         Here is the current information about the bank account:
         {bank_info}
         """},
@@ -21,6 +19,7 @@ def smart(question, bank_info):
     ])
     print(completion.choices[0].message.content)
     return 'I am too dumb to answer that question.'
+
 
 if __name__ == '__main__':
     from dotenv import load_dotenv

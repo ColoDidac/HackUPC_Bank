@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from domain import Transaction
 from exceptions import UnauthorizedError, NotFoundError, InternalServerError
 
-from utils import calculate_all
+from utils import calculate_all, needs_transactions
 
 
 class Client:
@@ -46,15 +46,6 @@ class Client:
         return Transaction(self.client.request(endpoint))
 
 
-def needs_transactions(func):
-    def wrap(*args, **kwargs):
-        args[0].get_transactions()
-        result = func(*args, **kwargs)
-        return result
-
-    return wrap
-
-
 class BankUser(Client):
     def __init__(self, api_key, user):
         self.client = Client(api_key, user)
@@ -74,7 +65,8 @@ class BankUser(Client):
 
     def process_upcoming_transaction(self, transaction):
         transaction = Transaction(transaction)
-        given_date = datetime.strptime(transaction.due_date, '%Y-%m-%dT%H:%M%z')
+        given_date = datetime.strptime(
+                transaction.due_date, '%Y-%m-%dT%H:%M%z')
         today_date = datetime.now(timezone.utc)
         self.debt += (transaction.amount.amount if
                       given_date > today_date else self.debt)
