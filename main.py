@@ -19,6 +19,13 @@ async def read_root():
 async def transactions():
     return [t.to_json() for t in bank.get_transactions()]
 
+@app.get('/simplified/transaction')
+async def transactions():
+    result=[]
+    for t in bank.get_transactions():
+        t=t.to_json()
+        result.append({"id":t["id"],"category":t["category"]["id"],"amount":t["amount"]["amount"],"date":t["date"]})
+    return result
 
 @app.get('/transactions/upcoming')
 async def upcoming_transactions():
