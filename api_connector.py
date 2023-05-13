@@ -1,62 +1,95 @@
-import os
+import json
+import furl
+import requests
 from datetime import datetime, timezone
 
-import requests
-from dotenv import load_dotenv
+from exceptions import UnauthorizedError, NotFoundError, InternalServerError
+from domain import Transaction
 
 
-class BankUser:
-    def __init__(self, num_client):
-        load_dotenv()
-        self.client_id = num_client
-        self.token = os.getenv(f'USER{num_client}_TOKEN')
+class Client:
+    BASE_URL = 'https://int.strandscloud.com/fs-api/'
+
+    def __init__(self, api_key, user):
+        self.session = requests.Session()
+        self.session.headers.update({
+            'accept': 'application/json',
+            'x-api-key': api_key,
+            'Authorization': 'Bearer ' + user})
+        self.url = furl.furl(self.BASE_URL)
+
+    API_OK = 200
+    API_ERRORS_MAPPING = {
+        403: UnauthorizedError,
+        401: UnauthorizedError,
+        400: NotFoundError,
+        500: InternalServerError,
+    }
+
+    def request(self, endpoint):
+        response = self.session.get(self.BASE_URL + endpoint)
+        if response.status_code != self.API_OK:
+            exception = self.API_ERRORS_MAPPING.get(
+                response.status_code, Exception)
+            raise exception
+        return json.loads(response.text)
+
+    def transactions(self):
+        endpoint = 'transactions'
+        data = self.client.request(endpoint)
+        return [Transaction(t) for t in data['transactions']]
+
+    def transaction(self, id):
+        endpoint = f'transactions/{id}'
+        return Transaction(self.client.request(endpoint))
+
+
+class BankUser(Client):
+    def __init__(self, api_key, user):
+        self.client = Client(api_key, user)
         self.transactions = []
         self.current_amount = 0
         self.debt = 0
         self.upcoming_transactions = []
 
+    def process_transaction(self, transaction):
+        transaction = Transaction(transaction)
+        self.current_amount += transaction.amount.amount
+        return transaction
+
+    def process_upcoming_transaction(self, transaction):
+        transaction = Transaction(transaction)
+        given_date = datetime.strptime(transaction.due_date, '%Y-%m-%dT%H:%M%z')
+        today_date = datetime.now(timezone.utc)
+        self.debt += (transaction.amount.amount if
+                      given_date > today_date else self.debt)
+        return transaction
+
     def get_transactions(self):
-        url = "https://int.strandscloud.com/fs-api/transactions?recoverHeatLevel=false&page=0&size=50&sort=DATE_DESC&applyToSplits=false"
-        headers = {
-            "accept": "application/json",
-            "x-api-key": "5brZ6as5Qj3AhS2rzeedm8VGxUBTlMSD8YQsyxz3",
-            "Authorization": f"bearer {self.token}"
-        }
-        response = requests.get(url, headers=headers)
-        for element in response.json()["transactions"]:
-            self.current_amount += element["amount"]["amount"]
-            self.transactions.append({"id": element["id"],
-                                      "category":element["category"]["id"],
-                                      "amount": element["amount"],
-                                      "date": element["date"]})
-        print(self.client_id)
-        print(self.transactions)
-        print(self.current_amount)
+        endpoint = 'transactions'
+        data = self.client.request(endpoint)
+        self.transactions = [
+                self.process_transaction(t) for t in data['transactions']]
+        return self.transactions
+
+    def get_transaction(self, id):
+        # Todo: If transactions is already filled search in transactions first
+        endpoint = f'transactions/{id}'
+        return Transaction(self.client.request(endpoint))
 
     def get_upcoming_transactions(self):
-        url = "https://int.strandscloud.com/fs-api/upcoming-transactions?recoverHeatLevel=false&page=0&size=50&sort=DUE_DATE_DESC"
-        headers = {
-            "accept": "application/json",
-            "x-api-key": "5brZ6as5Qj3AhS2rzeedm8VGxUBTlMSD8YQsyxz3",
-            "Authorization": f"bearer {self.token}"
-        }
-        response = requests.get(url, headers=headers)
-        for transaction in response.json()["upcomingTransactions"]:
-            self.upcoming_transactions.append({
-                "transaction": transaction["name"],
-                "amount": transaction["amount"],
-                "dueDate": transaction["dueDate"],
-            })
-            given_date = datetime.strptime(transaction["dueDate"], '%Y-%m-%dT%H:%M%z')
-            today_date = datetime.now(timezone.utc)
-            self.debt += transaction["amount"]["amount"] if given_date > today_date else self.debt
-        print(self.upcoming_transactions)
-        print(self.debt)
+        endpoint = 'upcoming-transactions'
+        data = self.client.request(endpoint)
+        self.upcoming_transactions = [
+                self.process_upcoming_transaction(t) for t in data[
+                    'upcomingTransactions']]
+        return self.upcoming_transactions
 
     def calculate_alert(self):
         print()
 
     def calculate_avg(self):
+        # TODO: Adapt to the new implementation
         current_month = datetime.now().month
         month_amount = 0
         ##########
@@ -78,10 +111,3 @@ class BankUser:
             if transaction["category"] == 81:
                 data_inicio_periodo=transaction["date"]
         """
-if __name__ == '__main__':
-    for client in range(5):
-        client_bank = BankUser(client)
-        client_bank.get_transactions()
-        # client_bank.get_upcoming_transactions()
-        # client_bank.calculate_alert()
-        client_bank.calculate_avg()

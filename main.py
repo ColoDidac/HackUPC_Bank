@@ -1,7 +1,30 @@
-from flask import Flask
+from os import environ
+from fastapi import FastAPI
+from dotenv import load_dotenv
 
-app = Flask(__name__)
+from api_connector import BankUser
 
-@app.route("/")
-def hello_world():
-    return "<p>Hello, World!</p>"
+
+load_dotenv()
+app = FastAPI()
+bank = BankUser(environ.get('API_KEY'), environ.get('USER'))
+
+
+@app.get("/")
+async def read_root():
+    return {"Hello": "World"}
+
+
+@app.get('/transactions')
+async def transactions():
+    return [t.to_json() for t in bank.get_transactions()]
+
+
+@app.get('/transactions/upcoming')
+async def upcoming_transactions():
+    return [t.to_json() for t in bank.get_upcoming_transactions()]
+
+
+@app.get('/transactions/{id}')
+async def transaction(id: str):
+    return bank.get_transaction(id).to_json()
