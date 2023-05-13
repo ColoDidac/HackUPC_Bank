@@ -1,10 +1,9 @@
-from os import environ
+from api_connector import BankUser
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
-from dotenv import load_dotenv
-
+from os import environ
 from smart import smart
-from api_connector import BankUser
 
 json_exclude = {'_data'}
 
@@ -25,11 +24,23 @@ async def transactions():
 
 @app.get('/simplified/transaction')
 async def simplify_transaction():
-    return bank.get_clear_transactions()
+    transactions = bank.get_clear_transactions()
+    traduct_dict={}
+    for t in transactions:
+        if t["category"] not in traduct_dict.keys():
+            traduct_dict[t["category"]]=t["amount"]
+        else:
+            traduct_dict[t["category"]] += t["amount"]
+
+    result=f'From your revenues of {traduct_dict["Revenues"]}.You have spend a total of'
+    for key in traduct_dict.keys():
+        if key != 'Revenues':
+            result=f'{result} {round(-1*traduct_dict[key])} dolars on {key}.'
+    return result
 
 @app.get('/consultai/{encoded_question}')
 async def simplify_transaction(encoded_question):
-    transactions_list=bank.get_clear_transactions()
+    transactions_list = bank.get_clear_transactions()
     decoded_question = encoded_question.encode("utf-8").decode("base64")
     return smart(question, transactions_list)
 
@@ -79,8 +90,8 @@ async def transaction_month_current():
     text = f"Current month status: {month_status['total_month']}, "
     if month_status['total_month'] > month_status['total_previous_month']:
         text += "which is %s more than last month." % (
-            month_status['total_month'] - month_status['total_previous_month'])
+                month_status['total_month'] - month_status['total_previous_month'])
     elif month_status['total_month'] < month_status['total_previous_month']:
         text += "which is %s less than last month." % (
-            month_status['total_previous_month'] - month_status['total_month'])
+                month_status['total_previous_month'] - month_status['total_month'])
     return text
