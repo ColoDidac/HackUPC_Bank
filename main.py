@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
 from dotenv import load_dotenv
 
+from smart import smart
 from api_connector import BankUser
 
 json_exclude = {'_data'}
@@ -25,6 +26,11 @@ async def transactions():
 @app.get('/simplified/transaction')
 async def simplify_transaction():
     return bank.get_clear_transactions()
+
+@app.get('/consultai')
+async def simplify_transaction():
+    transactions_list=bank.get_clear_transactions()
+    return transactions_list
 
 
 @app.get('/alerts')

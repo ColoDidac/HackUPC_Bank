@@ -1,5 +1,6 @@
 import furl
 import json
+import os
 import requests
 from calendar import monthrange
 from datetime import datetime, timezone
@@ -79,13 +80,26 @@ class BankUser(Client):
             self.process_transaction(t) for t in data['transactions']]
         return self.transactions
 
+    def map_category(self, id_categorie):
+        url = f"https://int.strandscloud.com/fs-api/categories/{id_categorie}"
+
+        headers = {
+            "accept": "application/json",
+            "x-api-key": "5brZ6as5Qj3AhS2rzeedm8VGxUBTlMSD8YQsyxz3",
+            "Authorization": f'Bearer {os.getenv("USER_KEY")}'
+        }
+        response = requests.get(url, headers=headers)
+        name=response.json()["name"]
+        print(name)
+        return name
     def get_clear_transactions(self):
         result = []
         for t in self.get_transactions():
             t = t.to_json()
+            category_name=self.map_category(t["category"]["id"])
             result.append(
                 {"id": t["id"],
-                 "category": t["category"]["id"],
+                 "category": category_name,
                  "amount": t["amount"]["amount"],
                  "date": t["date"]})
         self.simplified_transactions = result

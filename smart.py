@@ -12,7 +12,7 @@ def smart(question, bank_info):
         You must answer succinctly and in plain English the questions asked.
         """},
         {"role": "system", "content": f"""
-        Here is the current information about the bank account:
+        Here is the current information about the bank account, with his categories and the amount:
         {bank_info}
         """},
         {"role": "user", "content": question}
