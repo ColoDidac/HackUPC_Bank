@@ -80,8 +80,8 @@ class BankUser(Client):
             self.process_transaction(t) for t in data['transactions']]
         return self.transactions
 
-    def map_category(self, id_categorie):
-        url = f"https://int.strandscloud.com/fs-api/categories/{id_categorie}"
+    def get_map_categories(self):
+        url = f"https://int.strandscloud.com/fs-api/categories/"
 
         headers = {
             "accept": "application/json",
@@ -94,6 +94,7 @@ class BankUser(Client):
         return name
     def get_clear_transactions(self):
         result = []
+
         for t in self.get_transactions():
             t = t.to_json()
             category_name=self.map_category(t["category"]["id"])

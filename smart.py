@@ -3,6 +3,16 @@ import openai
 
 
 def smart(question, bank_info):
+    # Drop key "id" from all transactions
+
+    for transaction in bank_info:
+        transaction.pop("id", None)
+
+    # The date is in format: 2023-05-08T00: 00Z
+    # Format it to: 2023-05-08
+
+    for transaction in bank_info:
+        transaction["date"] = transaction["date"].split("T")[0]
     openai.api_key = environ.get('OPENAI_API_KEY')
     completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=[
         {"role": "system", "content": """
@@ -10,8 +20,8 @@ def smart(question, bank_info):
         You are connected to a bank account and can answer questions about the
         current balance and common transactions.
         You must answer succinctly and in plain English the questions asked.
-        When the user asks about income, assume that the user is asking about
-        the revenue of the month.
+        When the user asks about income, assume that the user is asking about the revenue transactons of the month.
+        The monthly income is the sum of all revenue transactions.
         Try to always make a guess, even if you are not sure about the answer.
         Do not report negative numbers, only positive numbers.
         All values are in dollars.
