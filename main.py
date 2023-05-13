@@ -3,6 +3,8 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
 from os import environ
+from dotenv import load_dotenv
+from urllib.parse import unquote
 from smart import smart
 
 json_exclude = {'_data'}
@@ -38,7 +40,8 @@ async def simplify_transaction():
             result=f'{result} {round(-1*traduct_dict[key])} dolars on {key}.'
     return result
 
-@app.get('/consultai/{encoded_question}')
+
+@app.get('/consultai/{question}')
 async def simplify_transaction(encoded_question):
     transactions_list = bank.get_clear_transactions()
     decoded_question = encoded_question.encode("utf-8").decode("base64")
