@@ -54,3 +54,9 @@ def test_transaction_month():
     response = client.get("/transactions/month")
     assert response.status_code == 200
     assert len(response.json()) > 0
+
+
+def test_transaction_month():
+    response = client.get("/transactions/month/current")
+    assert response.status_code == 200
+    assert len(response.json()) > 0
