@@ -29,5 +29,5 @@ jobs:
           ruff --format=github --target-version=py37 .
       - name: Test with pytest
         run: |
-          echo API_KEY=${{ secrets.API_KEY}}\nUSER=${{secrets.USER}} > .env
+          echo API_KEY=${{ secrets.API_KEY}}\nUSER_KEY=${{secrets.USER_KEY}} > .env
           pytest
