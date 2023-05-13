@@ -134,7 +134,8 @@ class BankUser(Client):
                    f"costs in order to be able to save some money." \
                    f"Currently you have {self.current_amount}"
         elif self.salaries + self.avg_day_cost < self.salaries * 0.3:
-            return "You should try to decrease the daily costs in order to be able to " \
+            return "You should try to decrease " \
+                   "the daily costs in order to be able to " \
                    "save the 30% of your income."
         else:
             return f"Your month is going alright " \
