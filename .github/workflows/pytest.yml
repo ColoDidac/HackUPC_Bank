@@ -28,8 +28,6 @@ jobs:
           # default set of ruff rules with GitHub Annotations
           ruff --format=github --target-version=py37 .
       - name: Test with pytest
-        env:
-          API_KEY: ${{ secrets.API_KEY }}
-          USER: ${{ secrets.USER }}
         run: |
+          echo API_KEY=${{ secrets.API_KEY}}\nUSER=${{secrets.USER}} > .env
           pytest
