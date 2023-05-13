@@ -1,8 +1,9 @@
 from fastapi.testclient import TestClient
 
-from main import app
+from main import app, bank
 
 client = TestClient(app)
+assert bank
 
 
 def test_read_root():
