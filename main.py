@@ -2,6 +2,7 @@ from os import environ
 from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
 from dotenv import load_dotenv
+from urllib.parse import unquote
 
 from smart import smart
 from api_connector import BankUser
@@ -27,11 +28,11 @@ async def transactions():
 async def simplify_transaction():
     return bank.get_clear_transactions()
 
+
 @app.get('/consultai/{encoded_question}')
 async def simplify_transaction(encoded_question):
-    transactions_list=bank.get_clear_transactions()
-    decoded_question = encoded_question.encode("utf-8").decode("base64")
-    return smart(question, transactions_list)
+    transactions_list = bank.get_clear_transactions()
+    return smart(unquote(question), transactions_list)
 
 
 @app.get('/alerts')
