@@ -32,7 +32,7 @@ async def simplify_transaction():
 @app.get('/consultai/{question}')
 async def simplify_transaction(encoded_question):
     transactions_list = bank.get_clear_transactions()
-    return smart(unquote(question), transactions_list)
+    return smart(unquote(encoded_question), transactions_list)
 
 
 @app.get('/alerts')
