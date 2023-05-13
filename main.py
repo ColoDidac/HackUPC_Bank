@@ -20,11 +20,12 @@ async def transactions():
 
 @app.get('/simplified/transaction')
 async def simplify_transaction():
-    result=[]
-    for t in bank.get_transactions():
-        t=t.to_json()
-        result.append({"id":t["id"],"category":t["category"]["id"],"amount":t["amount"]["amount"],"date":t["date"]})
-    return result
+    return bank.get_clear_transactions()
+
+@app.get('/alerts')
+async def alerts():
+    return bank.calculate_alert()
+
 
 @app.get('/transactions/upcoming')
 async def upcoming_transactions():
