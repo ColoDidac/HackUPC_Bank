@@ -24,3 +24,10 @@ def needs_transactions(func):
         return result
 
     return wrap
+
+
+def check_alerts(func):
+    def wrap(*args, **kwargs):
+        result = func(*args, **kwargs)
+        args[0].check_alerts()
+        return result

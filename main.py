@@ -64,3 +64,16 @@ async def transactions_month_amount():
 @app.get('/transaction/{id}')
 async def transaction(id: str):
     return bank.get_transaction(id).to_json()
+
+
+@app.get('/transactions/month/current')
+async def transaction_month_current():
+    month_status = bank.get_month_status()
+    text = f"Current month status: {month_status['total_month']}, "
+    if month_status['total_month'] > month_status['total_previous_month']:
+        text += "which is %s more than last month." % (
+            month_status['total_month'] - month_status['total_previous_month'])
+    elif month_status['total_month'] < month_status['total_previous_month']:
+        text += "which is %s less than last month." % (
+            month_status['total_previous_month'] - month_status['total_month'])
+    return text

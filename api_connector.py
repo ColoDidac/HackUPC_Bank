@@ -167,3 +167,16 @@ class BankUser(Client):
         for transaction in self.transactions:
             transactions_per_month[transaction.date[5:7]].append(transaction)
         return transactions_per_month
+
+    @needs_transactions
+    def get_month_status(self):
+        date = datetime.now()
+        month_transations = self.get_transactions_per_month()
+        total_month = sum([t.amount.amount for t in month_transations[
+            "{:02d}".format(date.month)]])
+        total_previous_month = sum([t.amount.amount for t in month_transations[
+            "{:02d}".format(date.month - 1)]])
+        return {
+                'total_month': total_month,
+                'total_previous_month': total_previous_month
+                }
