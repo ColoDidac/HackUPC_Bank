@@ -107,7 +107,11 @@ class BankUser(Client):
             d = {"id": t["id"],
                  "category": category_name,
                  "amount": t["amount"]["amount"],
-                 "date": t["date"]}
+            }
+            if "date" in t:
+                d["date"] = t["date"]
+            elif "due_date" in t:
+                d["date"] = t["due_date"]
             if "name" in t:
                 d["name"] = t["name"]
             result.append(d)
