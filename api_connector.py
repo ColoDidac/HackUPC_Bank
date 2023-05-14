@@ -159,9 +159,11 @@ class BankUser(Client):
         if self.salaries + self.debt + self.spend < 0:
             return "This Month your bills will be higher than your incomes."
         elif self.salaries + self.avg_day_cost * restant_days < 0:
+            have = self.salaries+ self.spend
+            have = round(have, 2)
             return f"You should try to decrease the daily " \
                    f"costs in order to be able to save some money." \
-                   f"Currently you have {self.salaries+ self.spend}"
+                   f"Currently you have {have} dollars."
         elif self.salaries + self.avg_day_cost < self.salaries * 0.3:
             return "You should try to decrease the daily costs in order to " \
                    "be able to save the 30% of your income."
@@ -171,7 +173,7 @@ class BankUser(Client):
                    f"currently you have still to pay {self.debt}." \
                    f"Your daily avg cost is {-self.avg_day_cost}. " \
                    f"I estimate you will finish this month with " \
-                   f"{estimated}"
+                   f"{estimated} dollars"
 
     def calculate_avg(self):
         current_month = datetime.now().month
