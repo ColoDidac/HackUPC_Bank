@@ -18,7 +18,8 @@ def smart(question, bank_info, upcoming_transactions):
         transaction["date"] = transaction["date"].split("T")[0]
 
     for transaction in upcoming_transactions:
-        transaction["date"] = transaction["date"].split("T")[0]
+        if "date" in transaction:
+            transaction["date"] = transaction["date"].split("T")[0]
 
     balance_month = {}
     total_balance = 0
