@@ -2,16 +2,22 @@ from os import environ
 import openai
 
 
-def smart(question, bank_info):
+def smart(question, bank_info, upcoming_transactions):
     # Drop key "id" from all transactions
 
     for transaction in bank_info:
+        transaction.pop("id", None)
+
+    for transaction in upcoming_transactions:
         transaction.pop("id", None)
 
     # The date is in format: 2023-05-08T00: 00Z
     # Format it to: 2023-05-08
 
     for transaction in bank_info:
+        transaction["date"] = transaction["date"].split("T")[0]
+
+    for transaction in upcoming_transactions:
         transaction["date"] = transaction["date"].split("T")[0]
 
     balance_month = {}
@@ -42,6 +48,8 @@ def smart(question, bank_info):
         {"role": "system", "content": f"""
         Here is the current information about the bank account, in JSON format:
         {bank_info}\n\n
+        Here is the current information about the upcoming transactions, in JSON format:
+        {upcoming_transactions}\n\n
 
         And here is the current balance in JSON: {balance_month}.
         """},

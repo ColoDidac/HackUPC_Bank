@@ -55,10 +55,14 @@ class Client:
         endpoint = 'transactions'
         data = self.client.request(endpoint)
         return [Transaction(t) for t in data['transactions']]
+    
+    def budgets(self):
+        endpoint = 'budgets'
+        return self.client.request(endpoint)
 
-    def transaction(self, id):
-        endpoint = f'transactions/{id}'
-        return Transaction(self.client.request(endpoint))
+
+    def generic_endpoint(self, endpoint):
+        return self.client.request(endpoint)
 
 
 class BankUser(Client):
@@ -94,18 +98,29 @@ class BankUser(Client):
             self.process_transaction(t) for t in data['transactions']]
         return self.transactions
     
-    def get_clear_transactions(self):
+    @staticmethod
+    def _clear_transactions(transactions):
         result = []
-        for t in self.get_transactions():
+        for t in transactions:
             t = t.to_json()
             category_name=map_category(t["category"]["id"])
-            result.append(
-                {"id": t["id"],
+            d = {"id": t["id"],
                  "category": category_name,
                  "amount": t["amount"]["amount"],
-                 "date": t["date"]})
+                 "date": t["date"]}
+            if "name" in t:
+                d["name"] = t["name"]
+            result.append(d)
+        return result
+    
+    def get_clear_transactions(self):
+        result = self._clear_transactions(self.get_transactions())
         self.simplified_transactions = result
         return self.simplified_transactions
+
+    def get_clear_upcoming_transactions(self):
+        result = self._clear_transactions(self.get_upcoming_transactions())
+        return result
 
     def get_transaction(self, id):
         # Todo: If transactions is already filled search in transactions first

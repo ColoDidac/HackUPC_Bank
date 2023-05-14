@@ -23,7 +23,6 @@ async def read_root():
 async def transactions():
     return jsonable_encoder(bank.get_transactions(), exclude=json_exclude)
 
-
 @app.get('/simplified/transaction')
 async def simplify_transaction():
     transactions = bank.get_clear_transactions()
@@ -45,8 +44,9 @@ async def simplify_transaction():
 @app.get('/consultai/{encoded_question}')
 async def consultai(encoded_question):
     transactions_list = bank.get_clear_transactions()
+    upcoming_transactions = bank.get_clear_upcoming_transactions()
     decoded_question = unquote(encoded_question)
-    return smart(decoded_question, transactions_list)
+    return smart(decoded_question, transactions_list, upcoming_transactions)
 
 
 @app.get('/alerts')
