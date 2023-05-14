@@ -45,6 +45,8 @@ def smart(question, bank_info, upcoming_transactions):
         Prefer to say "The most likely answer is X, but I'm not sure".
         Do not report negative numbers, only positive numbers.
         All values are in dollars.
+        Keep in mind that the user interact with you through a mediocre voice transcription system,
+        be aware of possible errors in the transcription, try to make the best guess of what the user is asking.
         """},
         {"role": "system", "content": f"""
         Here is the current information about the bank account, in JSON format:
