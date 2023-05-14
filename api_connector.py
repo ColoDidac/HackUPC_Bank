@@ -155,6 +155,7 @@ class BankUser(Client):
         restant_days = monthrange(current_year, current_month)[1] - current_day
         estimated = self.salaries + self.spend + self.debt + (
                 restant_days * self.avg_day_cost)
+        estimated = round(estimated, 2)
         if self.salaries + self.debt + self.spend < 0:
             return "This Month your bills will be higher than your incomes."
         elif self.salaries + self.avg_day_cost * restant_days < 0:
